@@ -1,5 +1,36 @@
 # Julia Set Renderer
-> Plot and explore Julia Sets!
+
+![Julia Gif](images/Gif_julia_1.gif)
+
+## About
+A real-time renderer for **Julia sets** defined by the iterative map:
+
+$$z_{n+1} = z_n^2 + c$$
+
+The application allows interactive exploration of fractal geometry by
+continuously varying the complex parameter $c$.
+
+---
+
+## Motivation
+
+Julia sets provide a concrete bridge between:
+- Complex dynamics
+- Chaos theory
+- Fractal geometry
+
+This projetcs focuses on **interactive exploration**, enabling intuition about how small parameter changes radicallt affect global structure.
+
+--- 
+
+## Features
+
+- Real-time Julia set rendering
+- Interactive control of parameter $c$
+- Zooming, panning and freezing
+- High-performance Rust implementation
+
+--- 
 
 ## Installation
 
@@ -8,40 +39,60 @@ git clone https://github.com/luca-dupont2/Julia_Renderer.git
 cd Julia_Renderer
 ```
 
-## Usage :
-* First install cargo (mentioned in [requirements](#Requirements) below).
-* Within the directory, run :
+---
+
+## Usage
+* Install Rust and Cargo (see [requirements](#Requirements))
+* Run the renderer :
   ```console
   cargo run --release
   ```
 
-## Controls :
-> Move the mouse around to change the value of c
 ---
-* \- : Zoom out
-* \+ : Zoom in
-* ← : Scroll left
-* → : Scroll right
-* ↑ : Scroll up
-* ↓ : Scroll down
-* Space : Freeze the screen
 
-## Requirements
-The following installs are required for this app to work.
-- Cargo
+## Controls
 
-To install this :
-* Linux or MacOS systems : run
-  ```console
-  curl https://sh.rustup.rs -sSf | sh
-  ```
-* Windows : Download and run [rustup-init.exe](https://win.rustup.rs/) 
+### Parameter Control
 
-## Sample images
+* Mouse movement: adjust the complex parameter $c$
+* Space: freeze/unfreeze parameter updates
+
+### Navigation
+
+* ```+``` / ```-``` : Zoom in / out
+* ```←``` ```→``` ```↓``` ```↑``` : Pan view
+
+---
+
+## Examples
+
 <div style="display: flex; gap: 10px;">
   <img src="/images/Plot1.png" width="400">
   <img src="/images/Plot2.png" width="400">
   <img src="/images/Plot3.png" width="400">
   <img src="/images/Plot4.png" width="400">
 </div>
+
+--- 
+
+## Mathematical background
+
+Each pixel corresponds to an initial value $$z_0 \in \mathbb{C}$$.
+The color encodes the escape time under iteration of the quadratic map.
+
+
+Different values of $c$ produce readically different dynamical behaviors, from connected fractals to totally disconnected dust.
+
+--- 
+
+## Requirements
+
+- Rust / Cargo
+
+Install via:
+  ```console
+  curl https://sh.rustup.rs -sSf | sh
+  ```
+(Windows users: download [rustup-init.exe](https://win.rustup.rs/) from the official Rust website.) 
+
 
