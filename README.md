@@ -10,15 +10,10 @@ cd Julia_Renderer
 
 ## Usage :
 * First install cargo (mentioned in [requirements](#Requirements) below).
-* Within the directory, either run :
+* Within the directory, run :
   ```console
   cargo run --release
   ```
-* Or create an application bundle which you'll find in `target/release/bundle/` by running :
-  ```console
-  cargo bundle --release
-  ```
-* Change functions to graph in the code at line 30
 
 ## Controls :
 > Move the mouse around to change the value of c
