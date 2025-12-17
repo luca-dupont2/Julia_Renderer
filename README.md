@@ -95,6 +95,8 @@ Install via:
   ```
 (Windows users: download [rustup-init.exe](https://win.rustup.rs/) from the official Rust website.) 
 
+---
+
 ## License
 
 MIT License
