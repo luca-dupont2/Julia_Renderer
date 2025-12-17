@@ -1,6 +1,6 @@
 # Julia Set Renderer
 
-<img src="images/Julia_GIF.gif" alt="Julia GIF">
+<video src="images/Julia_GIF_mp4.mp4" autoplay loop muted playsinline width="600"></video>
 
 ## About
 A real-time renderer for **Julia sets** defined by the iterative map:
