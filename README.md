@@ -1,6 +1,6 @@
 # Julia Set Renderer
 
-![Julia Gif](images/Julia_GIF.gif)
+<img src="images/Julia_GIF.gif" alt="Julia GIF" width="your_width" loop=infinite>
 
 ## About
 A real-time renderer for **Julia sets** defined by the iterative map:
