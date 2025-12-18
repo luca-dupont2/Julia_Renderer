@@ -19,7 +19,7 @@ Julia sets provide a concrete bridge between:
 - Chaos theory
 - Fractal geometry
 
-This projetcs focuses on **interactive exploration**, enabling intuition about how small parameter changes radicallt affect global structure.
+This project focuses on **interactive exploration**, enabling intuition about how small parameter changes radically affect global structure.
 
 --- 
 
