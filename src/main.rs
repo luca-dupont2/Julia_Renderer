@@ -1,6 +1,7 @@
 use macroquad::{prelude::*, miniquad::window::screen_size};
 use num_complex::Complex;
-use rayon::prelude::*;
+mod cache;
+use cache::{Cache, View};
 use scarlet::colormap::{ListedColorMap};
 
 // Define constants
@@ -66,11 +67,14 @@ async fn main() {
 
     let mut image = Image::gen_image_color(width as u16, height as u16, BLACK);
     let mut texture = Texture2D::from_image(&image);
+    let mut cache = Cache::new();
 
     let (mut w, mut h) = (image.width() as f64, image.height() as f64);
 
-    // Last mouse position
+    // Keep screen coordinates separate from the mapped Julia parameter.
+    let mut last_mouse = (-1., -1.);
     let (mut mx, mut my) = (0.,0.);
+    let mut last_c = None;
 
     // If the c value changes or not
     let mut freeze = false;
@@ -94,7 +98,7 @@ async fn main() {
     loop {
         // Check for window resizing
         let (new_width, new_height) = screen_size();
-        if new_width != width || new_height != height {
+        if new_width as usize != image.width() || new_height as usize != image.height() {
             image = Image::gen_image_color(new_width as u16, new_height as u16, WHITE);
             texture = Texture2D::from_image(&image);
 
@@ -103,7 +107,8 @@ async fn main() {
 
         // Check for mouse movement if the screen is not frozen
         let (new_mx, new_my) = mouse_position();
-        if (new_mx != mx || new_my != my) && !freeze {
+        if (new_mx, new_my) != last_mouse && !freeze {
+            last_mouse = (new_mx, new_my);
             (mx, my) = (new_mx, new_my);
             // Map the mouse position to the range in which c lies
             (mx, my) = (map_value(mx as f64, 0., w, -START_BOUNDARY, START_BOUNDARY,) as f32, map_value(my as f64, 0., h, START_BOUNDARY, -START_BOUNDARY,) as f32);
@@ -145,32 +150,18 @@ async fn main() {
         // Reset background
         clear_background(BLACK);
 
-        // Get a vector of (x,y) pairs for the screen
-        let x_y_vec : Vec<(u32, u32)> = (0..w as u32)
-            .flat_map(|x| (0..h as u32).map(move |y| (x, y)))
-            .collect();
-
-        // Normalize to desired range and map to individual complex values
-        let normalized_complex_x_y_vec : Vec<Complex<f64>> = x_y_vec.clone()
-            .into_iter()
-            .map(|(x,y)| Complex::new(map_value(x as f64, 0., w, -boundary + x_offset, boundary + x_offset, ),map_value(y as f64, 0., h, boundary - y_offset, -boundary - y_offset,)))
-            .collect();
-
-        // Transform pixels to colors
-        let colors: Vec<Color> = normalized_complex_x_y_vec
-            .par_iter()
-            .map(|z| f(*z, c)) // Compute number of iterations before escape
-            .map(|x| map_value(x, 0., MAX_ITERS as f64, 1.0, 0.0).clamp(0.0,1.0)) // Normalize value then clamp value to avoid rounding errors which would break the indexing
-            .map(|x| transform(&magma_color_map, x)) // Transform to a color
-            .collect();
-
-        // Color each pixel
-        for (color ,(x, y)) in colors.into_iter().zip(x_y_vec.into_iter()) {
-            image.set_pixel(x, y, color);
+        if last_c != Some(c) {
+            cache.clear();
+            last_c = Some(c);
         }
-
-        // Draw to screen
-        texture.update(&image);
+        let view = View { width: w as usize, height: h as usize, boundary, x: x_offset, y: y_offset };
+        if cache.update(view, |x, y| f(Complex::new(x, y), c)) {
+            for (index, value) in cache.values().enumerate() {
+                let value = map_value(value, 0., MAX_ITERS as f64, 1.0, 0.0).clamp(0.0, 1.0);
+                image.set_pixel((index % view.width) as u32, (index / view.width) as u32, transform(&magma_color_map, value));
+            }
+            texture.update(&image);
+        }
         draw_texture(&texture, 0., 0., WHITE);
 
         // Write the current applied c value
