@@ -100,3 +100,17 @@ Install via:
 ## License
 
 MIT License
+
+### Viewport cache
+
+Unchanged views reuse the rendered texture. During pan, zoom, or resize, the
+renderer reuses visible samples within 0.25 of the smaller current pixel spacing
+and evaluates only misses in parallel. Samples keep their original coordinates
+to prevent cumulative drift, and samples outside the new view are discarded.
+Storage is bounded by the pixel count, with old and new buffers during an update.
+
+This is approximate sampling, not an error bound on function values. Fine
+fractal boundaries and singularities can differ from a fresh render. Set
+`TOLERANCE` in `src/cache.rs` to `0.0` for exact-coordinate reuse only.
+
+Changing the Julia parameter `c` clears the cache. Freezing it allows reuse.
